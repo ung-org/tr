@@ -35,7 +35,7 @@ union trc {
 	struct {
 		unsigned int delete	:1;
 		unsigned int squeeze	:1;
-	};
+	} s;
 };
 
 enum {
@@ -52,8 +52,8 @@ static void init(union trc tr[], const char *s1, const char *s2, int flags)
 
 	for (size_t i = 0; i < UCHAR_MAX; i++) {
 		if (flags & (DELETE | SQUEEZE)) {
-			tr[i].delete = 0;
-			tr[i].squeeze = 0;
+			tr[i].s.delete = 0;
+			tr[i].s.squeeze = 0;
 		} else {
 			tr[i].c = i;
 		}
@@ -63,9 +63,9 @@ static void init(union trc tr[], const char *s1, const char *s2, int flags)
 		int c = s1[i];
 
 		if (flags & DELETE) {
-			tr[c].delete = 1;
+			tr[c].s.delete = 1;
 		} else if (flags & SQUEEZE) {
-			tr[c].squeeze = 1;
+			tr[c].s.squeeze = 1;
 		} else {
 			tr[c].c = s2[i];
 		}
@@ -74,7 +74,7 @@ static void init(union trc tr[], const char *s1, const char *s2, int flags)
 	if ((flags & DELETE) && (flags & SQUEEZE)) {
 		for (size_t i = 0; i < l2; i++) {
 			int c = s2[i];
-			tr[c].squeeze = 1;
+			tr[c].s.squeeze = 1;
 		}
 	}
 }
@@ -120,7 +120,7 @@ int main(int argc, char *argv[])
 
 	while ((c = getchar()) != EOF) {
 		if (flags & DELETE) {
-			if (!tr[c].delete) {
+			if (!tr[c].s.delete) {
 				putchar(c);
 			}
 		} else {
